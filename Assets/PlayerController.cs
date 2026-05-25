@@ -37,13 +37,13 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                this.rigid2D.AddForce(transform.up * jumpGauge * 25f);
+                this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
                 this.rigid2D.AddForce(transform.right*150f);
                 jumpGauge = 0;
             }
             else if (Input.GetKey(KeyCode.LeftArrow))
             {
-                this.rigid2D.AddForce(transform.up * jumpGauge * 25f);
+                this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
                 this.rigid2D.AddForce(-transform.right*150f);
                 jumpGauge = 0;
             }
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
         if(Mathf.Abs(normal.x)>0.5f)
         {
             this.rigid2D.linearVelocity = new Vector2(0, this.rigid2D.linearVelocity.y);
-            this.rigid2D.AddForce(new Vector2(normal.x * 150f, 0f));
+            this.rigid2D.AddForce(new Vector2(normal.x * 120f, 0f));
         }
         
         
