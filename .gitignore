@@ -1,0 +1,28 @@
+/[Ll]ibrary/
+/[Tt]emp/
+/[Obj]/
+/[Build]/
+/[Builds]/
+/[Logs]/
+/[UserSettings]/
+
+# Visual Studio / Rider 관련 임시 파일
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.db
+
+# OS 임시 파일
+.DS_Store
+Thumbs.db
+
+# 유니티 시스템 파일 및 플라스틱 SCM 관련
+ExportedObj/
+.plastic/
