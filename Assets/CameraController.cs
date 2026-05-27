@@ -18,14 +18,14 @@ public class CameraController : MonoBehaviour
         Vector3 playerPos = this.player.transform.position;
         Vector3 cameraPos = transform.position;
 
-        if (playerPos.y>4f+(10f*floor))
+        if (playerPos.y>4f+(9f*floor))
         {
-            transform.Translate(0, 10f, 0);
+            transform.Translate(0, 9f, 0);
             floor ++;
         }
-        else if (playerPos.y<-6f+(10f*floor))
+        else if (playerPos.y<-5f+(9f*floor))
         {
-            transform.Translate(0, -10f, 0);
+            transform.Translate(0, -9f, 0);
             floor --;
         }
     }
