@@ -15,10 +15,12 @@ public class PlayerController : MonoBehaviour
 
 
     float walkForce = 4.0f;
-    float maxWalkSpeed = 4.0f;
     int jumpGauge = 0;
     int maxJumpGauge = 45;
     bool isJumping;
+
+    GameObject director;
+    
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -28,6 +30,8 @@ public class PlayerController : MonoBehaviour
         this.rigid2D = GetComponent<Rigidbody2D>();
         this.animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+        director = GameObject.Find("GameDirector");
+
     }
 
     // Update is called once per frame
@@ -51,60 +55,13 @@ public class PlayerController : MonoBehaviour
             {
                 isJumping = true;
                 jumpGauge = maxJumpGauge;
-
-                if (Input.GetKey(KeyCode.RightArrow))
-                {
-                    this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
-                    this.rigid2D.AddForce(transform.right*400f);
-                    audioSource.PlayOneShot(jumpSound);
-                    this.animator.SetBool("isReady", false);
-                }
-
-                else if (Input.GetKey(KeyCode.LeftArrow))
-                {
-                    this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
-                    this.rigid2D.AddForce(-transform.right*400f);
-                    audioSource.PlayOneShot(jumpSound);
-                    this.animator.SetBool("isReady", false);
-                }
-                else
-                {
-                    this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
-                    audioSource.PlayOneShot(jumpSound);
-                    this.animator.SetBool("isReady", false);
-                }
-                jumpGauge = 0;
-                
-
+                JumpUp(400);
             }
             
         }
         if (Input.GetKeyUp(KeyCode.Space) && this.rigid2D.linearVelocity.y == 0)
         {
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
-                this.rigid2D.AddForce(transform.right*150f);
-                this.animator.SetBool("isReady", false);
-                audioSource.PlayOneShot(jumpSound);
-                jumpGauge = 0;
-            }
-            else if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
-                this.rigid2D.AddForce(-transform.right*150f);
-                this.animator.SetBool("isReady", false);
-                audioSource.PlayOneShot(jumpSound);
-                jumpGauge = 0;
-            }
-            else
-            {
-                this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
-                this.animator.SetBool("isReady", false);
-                audioSource.PlayOneShot(jumpSound);
-                jumpGauge = 0;
-            }
-            
+            JumpUp(150);
         }
         int key = 0;
         if (Input.GetKey(KeyCode.LeftArrow)) key = -1;
@@ -114,7 +71,28 @@ public class PlayerController : MonoBehaviour
         //걷기
         if (this.rigid2D.linearVelocity.y == 0 && !Input.GetKey(KeyCode.Space) && !isJumping)
         {
-            this.rigid2D.linearVelocity = new Vector2(this.walkForce * key, 0);
+            Walk(key);
+        }
+
+        if (key != 0)
+        {
+            transform.localScale = new Vector3(-key*0.1f, 0.1f, 1.0f);
+        }
+
+        //추락 속도 너무 빠르면 땅을 뚫어버려서 제한 걸어둠.
+        if (this.rigid2D.linearVelocity.y < -20)
+        {
+            this.rigid2D.linearVelocity = new Vector2(this.rigid2D.linearVelocity.x, -20);
+        }
+
+        this.animator.SetBool("isJumping", this.isJumping); //애니메이션 isJumping 파라미터에 isJumping Bool값 계속 넣어주기
+    }
+
+
+ 
+    void Walk(int key)
+    {
+        this.rigid2D.linearVelocity = new Vector2(this.walkForce * key, 0);
             if(this.rigid2D.linearVelocity.x==0)
             {
                 this.animator.SetBool("isWalking", false);
@@ -128,29 +106,30 @@ public class PlayerController : MonoBehaviour
                 }
 
             }
-        }
+    }
 
-        if (key != 0)
-        {
-            transform.localScale = new Vector3(-key*0.1f, 0.1f, 1.0f);
-        }
+    void JumpUp(int jumpConstant)
+    {
+        //y축 힘
+        this.rigid2D.AddForce(transform.up * jumpGauge * 23f);
+        //x축 힘힘
+        float direction = 0f;
+        if(Input.GetKey(KeyCode.RightArrow)) direction = 1f;
+        else if(Input.GetKey(KeyCode.LeftArrow)) direction = -1f;
+        this.rigid2D.AddForce(transform.right * direction * jumpConstant);
 
-
-        //추락 속도 너무 빠르면 땅을 뚫어버려서 제한 걸어둠.
-        if (this.rigid2D.linearVelocity.y < -30)
-        {
-            this.rigid2D.linearVelocity = new Vector2(this.rigid2D.linearVelocity.x, -30);
-        }
-        
-        this.animator.SetBool("isJumping", this.isJumping);
-
+        audioSource.PlayOneShot(jumpSound);
+        this.animator.SetBool("isReady", false);
+    
+        jumpGauge = 0;
     }
 
 
     void OnTriggerEnter2D(Collider2D other)
         {
-            SceneManager.LoadScene("ClearScene");
+            director.GetComponent<GameDirector>().GameClear();
         }
+
     void OnCollisionEnter2D(Collision2D other)
     {
         Vector2 normal = other.contacts[0].normal;
@@ -161,9 +140,8 @@ public class PlayerController : MonoBehaviour
             this.rigid2D.linearVelocity = new Vector2(0, this.rigid2D.linearVelocity.y);
             this.rigid2D.AddForce(new Vector2(normal.x * 120f, 0f));
         }
-        
-        
     }
+
     void OnCollisionStay2D(Collision2D other)
     {
         Vector2 normal = other.contacts[0].normal;
@@ -176,8 +154,8 @@ public class PlayerController : MonoBehaviour
             // 만약 벽 옆면에 비벼지고 있는 중이라면, Stay 상태에서도 계속 점프 중인 것으로 유지합니다.
             isJumping = true; 
         }
-        
     }
+
     void OnCollisionExit2D(Collision2D other)
     {
         isJumping = true;
