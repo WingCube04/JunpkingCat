@@ -15,6 +15,8 @@ public class GameDirector : MonoBehaviour
     int milliseconds;
     string timeString;
 
+    public GameObject menuPanel;
+
     void Awake()
     {
         // 이 스크립트가 붙어있는 오브젝트(gameObject)는 씬이 바뀌어도 파괴하지 말라는 유니티 정석 명령입니다.
@@ -48,6 +50,21 @@ public class GameDirector : MonoBehaviour
         timeString = string.Format("{0:D2}:{1:D2}.{2:D2}", minute, seconds, milliseconds);
         this.time.GetComponent<TextMeshProUGUI>().text = timeString;
         
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            bool isActive = menuPanel.activeSelf;
+
+            menuPanel.SetActive(!isActive);
+
+            if(!isActive == true)
+            {
+                Time.timeScale = 0f;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+            }
+        }
     }
 
     public void GameClear()
@@ -55,5 +72,25 @@ public class GameDirector : MonoBehaviour
         isTimerRunning = false;
         clearTime = timeString;
         SceneManager.LoadScene("ClearScene");
+    }
+
+    public void CloseMenu()
+    {
+        menuPanel.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    public void ReturnToStartScene()
+    {
+        Time.timeScale = 1f;
+        Destroy(gameObject);
+        SceneManager.LoadScene("StartScene");
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1f;
+        Destroy(gameObject);
+        SceneManager.LoadScene("GameScene");
     }
 }
