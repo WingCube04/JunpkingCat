@@ -39,13 +39,13 @@ public class PlayerController : MonoBehaviour
     {
         
 
-        if (Input.GetKeyDown(KeyCode.Space) && this.rigid2D.linearVelocity.y == 0)
+        if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid2D.linearVelocity.y) < 0.01f)
         {
             //스페이스바 누르면 그 자리에 멈춤춤
             this.rigid2D.linearVelocity = new Vector2(0, 0);
             this.animator.SetBool("isReady", true);
         }
-        if (Input.GetKey(KeyCode.Space) && this.rigid2D.linearVelocity.y == 0 && !isJumping)
+        if (Input.GetKey(KeyCode.Space) && Mathf.Abs(rigid2D.linearVelocity.y) < 0.01f && !isJumping)
         {
             //착지 전부터 스페이스바 누르면 밀리는 현상 있어서 그 자리 고정시킴킴
             this.rigid2D.linearVelocity = new Vector2(0, 0);
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             }
             
         }
-        if (Input.GetKeyUp(KeyCode.Space) && this.rigid2D.linearVelocity.y == 0)
+        if (Input.GetKeyUp(KeyCode.Space) && Mathf.Abs(rigid2D.linearVelocity.y) < 0.01f)
         {
             JumpUp(150);
         }
@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
         float speedx = Mathf.Abs(this.rigid2D.linearVelocity.x);
 
         //걷기
-        if (this.rigid2D.linearVelocity.y == 0 && !Input.GetKey(KeyCode.Space) && !isJumping)
+        if (Mathf.Abs(rigid2D.linearVelocity.y) < 0.01f && !Input.GetKey(KeyCode.Space) && !isJumping)
         {
             Walk(key);
         }
