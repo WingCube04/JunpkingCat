@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
         if (key != 0)
         {
-            transform.localScale = new Vector3(-key*0.1f, 0.1f, 1.0f);
+            transform.localScale = new Vector3(key*1f, 1f, 1.0f);
         }
 
         //추락 속도 너무 빠르면 땅을 뚫어버려서 제한 걸어둠.
@@ -86,6 +86,16 @@ public class PlayerController : MonoBehaviour
         }
 
         this.animator.SetBool("isJumping", this.isJumping); //애니메이션 isJumping 파라미터에 isJumping Bool값 계속 넣어주기
+
+        // 추락 애니메이션 판정
+        if (this.rigid2D.linearVelocity.y < 0f)
+        {
+            this.animator.SetBool("isFalling", true);
+        }
+        else
+        {
+            this.animator.SetBool("isFalling", false);
+        }
     }
 
 
